@@ -1,7 +1,8 @@
-;  This is code to show how to implement an I2C Slave on a midrange PIC
-;  like the PIC16F88. The enhanced midrange have more registers to solve
+;  This is code to show how to implement an I2C Peripheral on a midrange
+;  PIC (eg: PIC16F88). The enhanced midrange have more registers to solve
 ;  some of the difficulties presented by the older I2C implementations.
-;  It is way harder than it looks to create a robust I2C Slave on these.
+;  It is way harder than it looks to create a robust I2C Peripheral
+;  on these. (Note: "Peripheral" is my (and NXP's) preferred term.)
 ;
 ;  There is existing code out there to do this but the idea of this
 ;  code is to be as robust and as clear as I possibly make it.
@@ -12,7 +13,7 @@
 ;  which never completes (eg: reset on the master side), there is every
 ;  possibility of the I2C bus hanging up. This requires an I2C watchdog
 ;  to be implemented. This is not done in this code as I need to create
-;  a broken I2C master to test it. I don't distribute untested code ;-)
+;  a broken I2C controller to test it.
 ;
 ;  Distribution and use of this software are as per the terms of the
 ;  Simplified BSD License (also known as the "2-Clause License")
@@ -70,7 +71,7 @@
         {{
             I do assume in my code that the I2C variables are held in Bank0.
             i2c_isxmit, i2c_isfirst are flags used by the ISR. By "Transmit"
-            I mean a master read. This is the slave so we transmit on read.
+            I mean master read. This is the peripheral so we transmit on read.
 
             i2c_isfirst is two flags (ok, bad naming maybe). ISFIRST means
             we've started receiving and ISNEXT means we've got the first
@@ -125,7 +126,7 @@
         goto        IsrExit                 ; Everything else
 
 
-        ; ---- I2C Slave ISR Handling ----
+        ; ---- I2C Peripheral ISR Handling ----
 
 IsrI2CEntry:
 
@@ -290,7 +291,7 @@ IsrI2CMasterNack:
 
 IsrI2CWriteCol:
 IsrI2COverflow:
-        ; == Game over. I2C cycle ends. No slave ACK ==
+        ; == Game over. I2C cycle ends. No ACK from us ==
         ;   Just clear everything. NOTE: SSPOV sets SSPIF.
         ;   Write collision handling done here (like AN734)
 

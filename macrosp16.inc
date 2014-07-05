@@ -1,4 +1,5 @@
-; PIC16 Macros
+; Simple PIC16 Macros
+; Conor O'Rourke, 2012, Public domain
 
 ifbset  MACRO file, bit
         btfsc file, bit
